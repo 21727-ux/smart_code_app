@@ -24,6 +24,7 @@ class SmartCodeApp extends StatelessWidget {
   }
 }
 
+// ============================ หน้าแรก ============================
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -34,7 +35,6 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // โลโก้โค้งมน
             Center(
               child: Container(
                 width: 160,
@@ -56,7 +56,6 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 50),
-            // ปุ่มเริ่มสแกน
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
@@ -89,6 +88,32 @@ class HomePage extends StatelessWidget {
   }
 }
 
+// ============================ ข้อมูลโปรโมชั่น ============================
+class PromotionData {
+  final String title;
+  final String description;
+  final String imageUrl;
+  final String priceInfo;
+
+  PromotionData({
+    required this.title,
+    required this.description,
+    required this.imageUrl,
+    required this.priceInfo,
+  });
+}
+
+final Map<String, PromotionData> promotions = {
+  '8850779559955': PromotionData(
+    title: 'น้ำแร่ Aura ขวด 1.5 ลิตร',
+    description:
+        'น้ำแร่ธรรมชาติ 100% จากขุนเขา\nไม่มีการเติมแต่งหรือผ่านกระบวนการทางเคมี\nแร่ธาตุจำเป็นต่อร่างกาย สะอาด ปลอดภัย',
+    imageUrl: 'assets/aura_promo.png',
+    priceInfo: '1 แถม 1 (ปกติ 2 ขวด 46 บาท)',
+  ),
+};
+
+// ============================ หน้าสแกนบาร์โค้ด ============================
 class ScannerPage extends StatefulWidget {
   const ScannerPage({super.key});
 
@@ -98,6 +123,7 @@ class ScannerPage extends StatefulWidget {
 
 class _ScannerPageState extends State<ScannerPage> {
   final MobileScannerController cameraController = MobileScannerController();
+  bool isProcessing = false;
 
   @override
   void dispose() {
@@ -106,23 +132,35 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   void handleBarcodeDetected(BarcodeCapture barcodeCapture) {
+    if (isProcessing) return;
+
     final String? code = barcodeCapture.barcodes.first.rawValue;
     if (code != null && code.isNotEmpty) {
+      isProcessing = true;
       cameraController.stop();
-      Navigator.pop(context);
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text('รหัสที่สแกนได้'),
-          content: Text(code),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('ตกลง'),
-            ),
-          ],
-        ),
-      );
+
+      if (promotions.containsKey(code)) {
+        final promo = promotions[code]!;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => PromotionPage(promo: promo)),
+        );
+      } else {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('ไม่พบโปรโมชั่น'),
+            content: Text('รหัส: $code\nยังไม่มีข้อมูลโปรโมชั่นในระบบ'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('ตกลง'),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
@@ -132,6 +170,38 @@ class _ScannerPageState extends State<ScannerPage> {
       body: MobileScanner(
         controller: cameraController,
         onDetect: handleBarcodeDetected,
+      ),
+    );
+  }
+}
+
+// ============================ หน้าข้อมูลโปรโมชั่น ============================
+class PromotionPage extends StatelessWidget {
+  final PromotionData promo;
+
+  const PromotionPage({Key? key, required this.promo}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(promo.title),
+        backgroundColor: const Color(0xFFD87F3D),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Image.asset(promo.imageUrl),
+            const SizedBox(height: 16),
+            Text(
+              promo.priceInfo,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(promo.description, style: const TextStyle(fontSize: 18)),
+          ],
+        ),
       ),
     );
   }
