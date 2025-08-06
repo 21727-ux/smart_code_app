@@ -109,7 +109,14 @@ final Map<String, PromotionData> promotions = {
     description:
         'น้ำแร่ธรรมชาติ 100% จากขุนเขา\nไม่มีการเติมแต่งหรือผ่านกระบวนการทางเคมี\nแร่ธาตุจำเป็นต่อร่างกาย สะอาด ปลอดภัย',
     imageUrl: 'assets/aura_promo.png',
-    priceInfo: '2 ขวดเพียง 35 บาท (จากปกติ 46 บาท)',
+    priceInfo: 'สองขวดลดเหลือ 35 บาท จากราคาปกติ 46 บาท',
+  ),
+  '7612100053805': PromotionData(
+    title: 'โอวัลติน 180 มล.',
+    description:
+        'โอวัลตินสูตรออริจินัล รสช็อกโกแลตมอลต์\nอุดมด้วยวิตามินและแร่ธาตุ ช่วยเพิ่มพลังงาน\nอร่อย ดื่มง่าย พกพาสะดวก',
+    imageUrl: 'assets/ovaltine_promo.png',
+    priceInfo: '2 กล่อง เพียง 20 บาทเท่านั้น!',
   ),
 };
 
@@ -192,7 +199,11 @@ class PromotionPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Image.asset(promo.imageUrl),
+            Image.asset(
+              promo.imageUrl,
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+            ),
             const SizedBox(height: 16),
             Text(
               promo.priceInfo,
