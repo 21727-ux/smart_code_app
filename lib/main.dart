@@ -109,7 +109,7 @@ final Map<String, PromotionData> promotions = {
     description:
         'น้ำแร่ธรรมชาติ 100% จากขุนเขา\nไม่มีการเติมแต่งหรือผ่านกระบวนการทางเคมี\nแร่ธาตุจำเป็นต่อร่างกาย สะอาด ปลอดภัย',
     imageUrl: 'assets/aura_promo.png',
-    priceInfo: '1 แถม 1 (ปกติ 2 ขวด 46 บาท)',
+    priceInfo: '2 ขวดเพียง 35 บาท (จากปกติ 46 บาท)',
   ),
 };
 
